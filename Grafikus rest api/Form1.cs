@@ -19,12 +19,11 @@ namespace Grafikus_rest_api
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             await dolgozok();
-            adatok();
         }
-        private static async Task<List<Api>> dolgozok()
+        private async Task dolgozok()
         {
             List<Api> nyil = new List<Api>();
             string url = $"https://retoolapi.dev/Kc6xuH/data";
@@ -36,20 +35,45 @@ namespace Grafikus_rest_api
                 string jsonString = await response.Content.ReadAsStringAsync();
                 nyil = Api.FromJson(jsonString).ToList();
             }
-            return nyil;
-        }
-
-        private void adatok_listbox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           
-        }
-        private void adatok()
-        {
-            List<Api> nyil = new List<Api>();
-            foreach (Api api in nyil)
+            foreach (var api in nyil)
             {
                 listbox_adatok.Items.Add(api.ApiName);
             }
+        }
+
+        private async void Create_button_Click(object sender, EventArgs e)
+        {
+            List<Api> nyil = new List<Api>();
+            string url = $"https://retoolapi.dev/Kc6xuH/data";
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+                nyil = Api.FromJson(jsonString).ToList();
+            }
+            nyil.Add(new Api() {ApiName = textBox_Name.Text, ApiPosition=textBox_Position.Text, ApiSalary=int.Parse(textBox_Salary.Text)});
+        }
+
+        private async void Delete_button_Click(object sender, EventArgs e)
+        {
+            List<Api> nyil = new List<Api>();
+            string url = $"https://retoolapi.dev/Kc6xuH/data{listbox_adatok.SelectedIndex}";
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+                nyil = Api.FromJson(jsonString).ToList();
+            }
+            
+        }
+
+        private void listbox_adatok_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
