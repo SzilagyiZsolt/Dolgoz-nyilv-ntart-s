@@ -61,14 +61,13 @@ namespace Grafikus_rest_api
             List<Api> nyil = new List<Api>();
             string url = $"https://retoolapi.dev/Kc6xuH/data{listbox_adatok.SelectedIndex}";
             var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
             var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 string jsonString = await response.Content.ReadAsStringAsync();
                 nyil = Api.FromJson(jsonString).ToList();
             }
-            
         }
 
         private void listbox_adatok_SelectedIndexChanged(object sender, EventArgs e)
